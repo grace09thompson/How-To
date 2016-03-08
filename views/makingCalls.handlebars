@@ -1,0 +1,250 @@
+<div class= "bodyContent">
+    <p>To get started using the API calls, let's examine how to use a specific example method call, candSummary. This method returns summary data for a specified candidate.
+        There are two primary ways to request the data, using an AJAX request, or an HTTP request. An AJAX request is made client side, while the HTTP request is made server side.
+        We will take a look at how make both kinds of calls, and the differences between them.
+    </p>
+    <h3>Accessing the data through an AJAX request</h3>
+    <p>
+      One way to access the data is to make an AJAX request, where the client side makes the direct request.
+      This is not an ideal method to use, as it can leave our API key visible to a user that inspects the website code.
+      But since this is the most direct way, we will start with how to access data in this way.
+    </p>
+    <p>
+      You make a request by first creating a new XMLHttpRequest, such as <strong>var req = new XMLHttpRequest();</strong>
+      This XMLHttpRequest creates an object that can make HTTP requests, and returns the data it gets back.
+      We will compare synchronous requests vs asynchronous requests, and what this means in terms of accessing the data from the API.
+    </p>
+    <h4>Synchronous version</h4>
+    <p>
+      To make the call, we have to open a connection to the OpenSecrets resource by making a call like this:
+      <blockquote>
+          <code>req.open("GET", "http://www.opensecrets.org/api/?method=candSummary&cid=N00000528&cycle=2016&output=json&apikey=__INSERT_API_KEY__" , false);</code>
+      </blockquote>
+      Let’s break this down. The req object we created earlier makes a call to open a connection to the above URL,
+      in the form <strong>req.open([type of request], [URL], [asynchronous/synchronous])</strong>.
+        <ul>
+          <li>
+            The <em>type of request</em> for the API calls is going to be GET, where data is returned from the server.
+            The other type of request, POST, is commonly used to send information to the server.
+            We will not be using POST methods to access the OpenSecrets server, since information is only being returned,
+            and no data on the server can be modified from these calls.
+          </li>
+          <li>
+            The URL is the path to access the resource, let’s break it down to understand the parts that make up the path.
+            The base URL for the request is <em>http://www.opensecrets.org/api/</em>, this portion will not change for any of the calls available
+            through the OpenSecrets API. The next section, <em>“?method=candSummary”</em> indicates the specific method that we are invoking,
+            in this case, being candSummary, a method that returns summary information about a specified political candidate.
+            The next section, <em>“cid=N00000528”</em> specifies the politician we want to look up. In this case, the CID belongs to Bernie Sanders,
+            but OpenSecrets provides an Excel file that lists all political candidates and their CID numbers, represented party,
+            the ID for the last district the candidate ran for, as well as the FEC candidate ID. We are primarily concerned with the CID,
+             which is used most frequently. These id numbers used so often, it is a good idea to store them in your program somewhere.
+             For example, if you were to use this data to create a site where people could look up financial information about all the presidential
+             candidates for 2016, you might want to create an array that stores the candidates names and the associated ids.
+             This way, when the user requests information about a candidate, they can ask by name, and the corresponding id can be found and
+             immediately used to make the calls. The next section of the URL is specific to the candSummary call, and specifies the cycle to return
+             data for. The API specifies available years to ask for on the website, in our case, we are asking for data from the 2016 cycle.
+             The “output=json” specifies that the data be sent back in JSON format, if left out, the data will get sent back in default XML
+             format. Since we prefer JSON for the ease of parsing the data, we will specify that the output be in JSON format.
+             The last section of the URL path, <em>“apikey=__INSERT_API_KEY__”</em> is where you insert your individual private api key,
+             substituting the capitalized text. This api key must be verified by OpenSecrets when making the request in order to
+             access the requested data. If you input the key incorrectly, or have an expired key, you will receive a “Failed to load resource” response,
+             indicating that you were denied access to the data.
+             <p><i>NOTE: In between each section of the URL path, you will notice a & symbol separating them.
+               This is important to indicate the different pieces of information detailing the request, and is used in all queries.
+             </i></p>
+          </li>
+          <li>
+            The last piece of the call indicates whether or not this is an asynchronous request. Asynchronous calls allow a program to run
+            without having to wait for each element to run one at a time. Asynchronous calls allow us to make calls and continue execution
+            while waiting for the response. Once received, the call will finish that portion of execution depending on the response it gets back.
+            For a synchronous call, this piece sends a value of ‘false,’ and sends ‘true’ for asynchronous.
+          </li>
+        </ul>
+    </p>
+    <p>
+      After detailing the manner of request, since it is a GET request, the request is sent entirely through the query at the end of the URL,
+      and does not send any information through the body of the request. As such, we send a value of null, as <strong>req.send(null);</strong>
+      Here is an example call:
+      <blockquote><pre>
+        var req = new XMLHttpRequest();
+        req.open("GET", "http://www.opensecrets.org/api/?method=candSummary&cid=N00030612&cycle=2016&output=json&apikey=__INSERT_API_KEY__", false);
+        req.send(null); //get request, so no data sent in body of request
+        if (req.status >= 200 && req.status < 400) {
+          var data = JSON.parse(req.response);
+          var summary = data.response.summary['@attributes'];
+          console.log(summary);
+          console.log("Candidate Name: " + summary['cand_name']);
+          console.log("Cash on hand: " + summary['cash_on_hand']);
+        } else {
+          console.log("Error in network request: " + req.statusText);
+        }
+      </pre></blockquote>
+    </p>
+    <p>
+      If the request was successful, the data returned from the server will be in an object called response, accessed by req.response.
+      In its raw form, it returns the response object data in a JSON string. Here is an example response for a call to candidate Marco Rubio’s data:
+      <blockquote><code>
+          {"response":{"summary":{"@attributes":{"cand_name":"Rubio, Marco","cid":"N00030612","cycle":"2016","state":"FL","party":"R",
+          "chamber":"Pres","first_elected":"2010","next_election":"2016","total":"34652654.4","spent":"32935701.83","cash_on_hand":"5055406.64",
+          "debt":"98000","origin":"Center for Responsive Politics","source":"http:\/\/www.opensecrets.org\/politicians\/summary.php?cid=N00030612&cycle=2016",
+          "last_updated":"01\/31\/2016"}}}}
+      </code></blockquote>
+      To access the various attributes of the object, we will need to parse the data and break it into a legitimate JSON object.
+      Luckily, this is made very easy with JSON.parse(), a method that takes a JSON string like the one we have here, and converts it to a
+      working JSON object. By calling JSON.parse(req.response), we can get our response data in an accessible form. Now, the data looks like this:
+      <ul><code>
+        <li>response: Object</li>
+        <ul>
+          <li>summary: Object</li>
+          <ul>
+            <li>@attributes: Object</li>
+            <ul>
+              <li>cand_name: "Rubio, Marco"</li>
+              <li>cash_on_hand: "5055406.64"</li>
+              <li>chamber: "Pres"</li>
+              <li>cid: "N00030612"</li>
+              <li>cycle: "2016"</li>
+              <li>debt: "98000"</li>
+              <li>first_elected: "2010"</li>
+              <li>last_updated: "01/31/2016"</li>
+              <li>next_election: "2016"</li>
+              <li>origin: "Center for Responsive Politics"</li>
+              <li>party: "R"</li>
+              <li>source: "http://www.opensecrets.org/politicians/summary.php?cid=N00030612&cycle=2016"</li>
+              <li>spent: "32935701.83"</li>
+              <li>state: "FL"</li>
+              <li>total: "34652654.4"</li>
+            </ul>
+          </ul>
+        </ul>
+      </code></ul>
+      This is a little tricky to navigate, since the data that we actually want is nested a couple of layers in.
+      So if we had a variable data that held the JSON object (<em>var data = JSON.parse(req.response)</em>),we need to dive a little deeper to get direct
+      access to the candidate attributes. We can do that by either appending the specified attributes to the data object, or for something easier to
+      look at, create a new object variable to get to the attributes, such as <strong>var summary = data.response.summary[‘@attributes’];</strong>
+      Let’s discuss this a bit more in detail. The first two nested attributes, response, and summary, get us almost all the way there.
+      But what about <em>‘@attributes’</em>? If you were to try to access using dot notation, such as summary.@attributes, you will get a syntax
+      error complaing about the ‘@’ symbol. By accessing the nested object by key (using ‘@attributes’ as the key name), we can get where we want.
+      So now, if you were to look at the contents of the summary object, it would directly show the list of objects that was inside inside the response,
+      summary, and @attribute objects previously.
+    </p>
+    <p>
+    	Now, we can access the individual attributes for a specified candidate by indicating the key name, such as <em>summary[‘debt’]</em>, which would return
+      the value associated (for Marco Rubio, that is $98,000). You can now use the data acquired to fill in the values for each candidate on your web site.
+      For example, if you wanted a simple list containing this basic data, you could create a list in your HTML page and link the content in, as such:
+        <blockquote><pre>
+            document.getElementById("candidateName").textContent ="Candidate Name: " + summary['cand_name'];
+            document.getElementById("cashOnHand").textContent = "Cash on hand: " + summary['cash_on_hand'];
+            document.getElementById("chamber").textContent = "Chamber: " + summary['chamber'];
+            document.getElementById("cycle").textContent = "Cycle: " + summary['cycle'];
+            document.getElementById("debt").textContent = "Debt: " + summary['debt'];
+            document.getElementById("spent").textContent = "Spent: " + summary['spent'];
+            document.getElementById("state").textContent = "State: " + summary['state'];
+        </pre></blockquote>
+    </p>
+    <h4>Asynchronous version</h4>
+    <p>
+      Now, let’s make this an asynchronous request! Asynchronous calls are much more effective at loading a page as efficiently and quickly as possible,
+      without having to wait for any unresponsive element, or request that takes longer to make. By making a few changes, we can make our request in a
+      much more effective way. Let’s get Bernie Sander’s info this time:
+        <blockquote><pre>
+          var req = new XMLHttpRequest();
+          req.open("GET", "http://www.opensecrets.org/api/?method=candSummary&cid=N00000528&cycle=2016&output=json&apikey=__INSERT_API_KEY__", true);
+          req.addEventListener('load', function() {
+            if (req.status >= 200 && req.status < 400) {
+              var data = JSON.parse(req.response);
+              var summary = data.response.summary['@attributes'];
+
+              document.getElementById("candidateName").textContent ="Candidate Name: " + summary['cand_name'];
+              document.getElementById("cashOnHand").textContent = "Cash on hand: " + summary['cash_on_hand'];
+              document.getElementById("chamber").textContent = "Chamber: " + summary['chamber'];
+              document.getElementById("cycle").textContent = "Cycle: " + summary['cycle'];
+              document.getElementById("debt").textContent = "Debt: " + summary['debt'];
+              document.getElementById("spent").textContent = "Spent: " + summary['spent'];
+              document.getElementById("state").textContent = "State: " + summary['state'];
+            } else {
+              console.log("Error in network request: " + req.statusText);
+            }
+          })
+          req.send(null); //get request, so don't send anything
+        </pre></blockquote>
+      Let’s examine how the asynchronous call works. Like with synchronous calls, we make the same format req object, and the req.open() is very similar,
+      with one exception. With asynchronous calls, we evaluate the last part to TRUE instead of false, indicating that we will be making an asynchronous call.
+      This is the point when things change. Instead of sending the data and immediately continuing on as usual, we add an event listener to the request,
+      registered on the request’s load event. This is also known as a callback. So now, instead of pausing and waiting for the request to complete,
+      we can continue on and build up other portions of the web site while we are waiting. Once the request finishes, the event listener will jump into
+      affect, and we can now do stuff with the response. It is important that the response data is only accessed from within the callback, or it might not
+      be available when some other portion of the site executes. We have also added code to handle any errors that may pop up. In the OpenSecrets API
+      documentation for each method, it lists potential status codes that may arise in various situations. A value between 200 and 400 indicates a
+      successful request, while 400 codes indicate that something went wrong with the request (such as invalid syntax, or invalid API key), and
+      500 codes indicate an error with the server. If the request went wrong, the program will not try to access data that it doesn’t have access to,
+      but rather jump down to display an error message in the console. But as long as the status is within the successful range, the program will
+      operate as it did before, grabbing and passing along the data it received.
+    </p>
+  </div>
+  <div class="bodyContent">
+    <h3>Accessing the data through a server side HTTP request</h3>
+    <p>
+      Making requests to the OpenSource API can also be done from the server. This adds additional security and keeps data confidential and hidden
+      to the user. This allows you to keep sensitive data, such as your API key, from being accessed by others. This is the preferred way of making
+      requests to the API. Let’s see how we can make the same call to candSummary as we did through AJAX, but this time, we are going to use Node.js and
+      some of its useful middleware.
+      <ul><p>What is Node.js?</p>
+        <li>Node.js is an asynchronous event driven framework that allows us to build all sorts of network applications. We won’t go into
+          detail about Node.js here, but for more information and to download the package, <a href="http://nodejs.org/en/">click here</a></li>
+        <li>Node has a few packages that you can use to build a functioning website, of note that are especially useful:
+            <ul>
+              <li><a href="http://github.com/expressjs/express">Express</a>: This framework is useful for constructing web applications, and helps compartmentalize functionality,
+                using routes, specifying responses such as error handling, and specifying a port to listen for. There are template engines
+                that work to further organize your code, such as Express Handlebars, Jade, and EJS.</li>
+                <li><a href="http://github.com/expressjs/session">Express Session</a>: Sessions store data server side, this is what you can use to make
+                  HTTP calls from the server side.</li>
+                <li><a href="http://github.com/request/request">Request</a>: Request  offers a simple way to make HTTP calls via the server, used also
+                  for things such as HTTP authentication, sending form data, and more. This is what we will be using to make our calls to the OpenSecrets
+                  API.</li>
+            </ul>
+        </li>
+      </ul>
+      Please refer to the Node documentation in the links to acquaint yourself with the framework. Since Node runs on the console,
+      there is some setup required to get a site up and running. To use the above frameworks, you will need to use npm to install them, and a
+      package.json file to store the dependencies. Once set up, we are ready to get back to the OpenSecrets API! Let’s continue!
+    </p>
+    <p>
+      The first step of making our HTTP request is to create the request object we want to use. The statement var request = require(‘request’)
+      creates a request object, and indicates that we will be using the Request library for making the calls. (Remember, to use the Request library,
+      in the directory where you have your web application, install Request with npm install request --save to save the dependency to your package.json file.
+      Now, we can request the data for candSummary from the API with the following call:
+      <blockquote><pre>
+        request("http://www.opensecrets.org/api/?method=candSummary&cid=" + donald + "&cycle=2016&output=json&apikey=" + apiKey, function(err, response, body) {
+          if(!err && response.statusCode < 400) {
+            var data = JSON.parse(body);
+   	        var summary = data.response.summary['@attributes'];
+             var profile = [];  //now you can parse the data into an object ready to use!
+             for (key in summary) {
+               profile.push({'name': key, 'value': summary[key]});
+              }
+           } else {
+             if(response) {
+               console.log("Error " + response.statusCode);
+             }
+             next(err);  //will call last function that has 4 arguments
+           }
+         }
+      </pre>
+      <em>NOTE: In this call, I created a variable to store the CID of the candidate, in this case, that of Donald Trump (CID: "N00023864").
+        I also created a separate variable to store the API key as a string, that I append onto the query. </em>
+    </blockquote>
+      Now, there are a few things that are different about making the request server side. Most noticeably, the anonymous function callback as the
+      second argument of the request. This function provides implementation for what to do with the response from the OpenSecrets server. If something went
+      wrong with the request, such as an incorrect key or query, the function will handle the error accordingly. The function will only try and process the data
+      if it was received successfully, indicated by a status code under 400, and err resolving to false. At this point, we can handle the data as we have with
+      previous calls, moving through the nested objects until we can access the member attributes directly.
+    </p>
+  </div>
+
+    <span class = "nextPage">
+        <p>Now that we know how the basic process for making calls, let's learn a bit more about what to expect with the other methods available to us.</p>
+        <form action="/methods">
+            <input type="submit" value="Next Page">
+        </form>
+    </span>

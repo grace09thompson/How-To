@@ -1,0 +1,75 @@
+<div class="bodyContent">
+        <p>
+          OpenSecrets.org is a website run by the Center for Responsive Politics, a research group that tracks money in U.S. politics, and the effect it has on public policy and elections. OpenSecrets.org is a comprehensive resource that allows the public access to data concerning federal campaign contributions, from finances concerning specific legislators to the organizations that support them. This information can be accessed directly through the OpenSecrets API (stands for Application Program Interface), a library of methods that return data specific to the requests being made. We can display this data on a web page, keeping up-to-date data on various candidates, and much more. To begin, we will navigate how to access this data and use the OpenSecrets API to discover all kinds of information about our U.S. politicians.
+        </p>
+        <p>Learn more about this group here: <a href="http://www.opensecrets.org">http://www.opensecrets.org</a></p>
+        <p>The OpenSecrets API provides us with a number of methods we can use to request various types of information. Here is a list of methods available:
+        </p>
+        <table id="apiMethods">
+            <tr>
+                <th scope="col">Method Name</th>
+                <th scope="col">Description</th>
+            </tr>
+            <tr>
+                <td>candContrib</td>
+                <td>This method provides the top organizations that have contributed to a specified politician.</td>
+            </tr>
+            <tr>
+              <td>candIndByInd</td>
+              <td>This method provides the total amount contributed to a specified candidate from a specified industry.</td>
+            </tr>
+            <tr>
+              <td>candIndustry</td>
+              <td>This method provides data concerning the  top industries that have contributed to a specified politician. </td>
+            </tr>
+            <tr>
+              <td>candSector</td>
+              <td>This method provides data on the amount contributed to a specified politician by a candidate’s sector.</td>
+            </tr>
+            <tr>
+              <td>candSummary</td>
+              <td>This method provides summary data concerning a specified politician. </td>
+            </tr>
+            <tr>
+              <td>congCmteIndus</td>
+              <td>This method provides summary fundraising data for a specific committee, industry, and congress number. </td>
+            </tr>
+            <tr>
+              <td>getLegislators</td>
+              <td>This method provides a list of the Congressional legislators and their associated attributes for a specified subset, either by state, district, or specific CID.</td>
+            </tr>
+            <tr>
+              <td>memPFDProfile</td>
+              <td>This method returns financial data on a specified member of congress, providing data such as net worth, assets, and transactions. </td>
+            </tr>
+            <tr>
+              <td>getOrgs</td>
+              <td>This method provides the organization id for a requested organization, required for the orgSummary method below.</td>
+            </tr>
+            <tr>
+              <td>orgSummary</td>
+              <td>This method provides summary fundraising information for a specified organization.</td>
+            </tr>
+          </table>
+          <br />
+          <p>
+            Here is some sample data retrieved in real time from the Open Secrets resource, using the memPFDProfile to access financial
+            data for Bernie Sanders:
+            {{#if profile}}
+              <ul>
+                {{#each profile}}
+                <li><strong>{{this.name}}:</strong> {{this.value}}</li>
+                {{/each}}
+              </ul>
+              {{else}}
+                <p>No data could be retrieved at this time, sorry!</p>
+            {{/if}}
+          </p>
+      </div>
+
+          <span class="nextPage">
+            <p>Alright, let's get started!</p>
+            <form action="/gettingStarted">
+              <input type="submit" value="Next Page">
+            </form>
+          </span>

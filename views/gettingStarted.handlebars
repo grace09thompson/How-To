@@ -1,0 +1,38 @@
+<div class = "bodyContent">
+
+      <p>
+        In order to gain access to the OpenSecrets API, first we must sign up for a key. Access is free for non-commercial purposes, so it is open for public use!
+        Signing up for a key is easy, let’s quickly go through the steps:
+      </p>
+      <p>Sign-up Page: <a href="https://www.opensecrets.org/api/admin/index.php?function=signup">Here</a></p>
+    </div>
+
+      <div class = "column1of2" id="signupImage">
+        <img src='/images/SignUpPage.png' alt="signuppage">
+      </div>
+      <div class="column2of2">
+        <p>
+        Fill out the brief form to create a new API account. It will request basic information, such as your name, email, organization and URL, and reason for access.
+        Don’t worry about the organization and URL if you don’t have one, simply enter your own name or “N/A” for the organization, and a localhost URL that you will be using
+        to run your site. Likewise, if you know the URL you will host your site on, feel free to input that directly. After filling out the form, you will receive an email with a
+        link to activate your account. After clicking, your account is now active, and you can begin using the API. After logging in, you will se your API Key on your account page,
+        listed under “Profile & Key.” You can generate a new key if anything goes wrong, or your key gets compromised from here as well, with the click of a button.
+        </p>
+      </div>
+      <div id="usageLimits">
+      <h3>API Total Usage Limits</h3>
+      <p>
+        It is important to keep in mind that you have a limited number of calls you can make for each method in the API. Each method can be called up to 200 times each day.
+        This emphasizes the importance of keeping your API key secret and inaccessible by others. If someone were to access your key, they could potentially use up your
+        remaining calls or do something malicious with the data, resulting in your access being revoked. For this reason, it is important to keep your key private. As I will also
+        be keeping my API key private, in the examples, you may see “__API__KEY__” written in the code. This is merely an indicator of where you would replace the text with your own key.
+      </p>
+    </div>
+
+
+    <span class = "nextPage">
+        <p>Now that we have our API key, let's learn how to make calls to the OpenSecrets API!</p>
+        <form action="/makingCalls">
+            <input type="submit" value="Next Page">
+        </form>
+    </span>

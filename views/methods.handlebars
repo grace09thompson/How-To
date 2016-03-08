@@ -1,0 +1,152 @@
+<div class="bodyContent">
+      <p>Here is more detailed information about using the different methods in the API, and what to expect from the data being returned. The
+      OpenSecrets API documentation provides a thorough list of the specific attributes listed for each method, as well as the required
+      codes and terms to make the request. It can be tricky though, as the object data returned is often nested within several objects,
+      and can be confusing to access. Here is the nesting order for each of the OpenSecrets API calls.
+
+      <a href="https://www.opensecrets.org/resources/create/api_doc.php">Click here</a> for more information. </p>
+      <ul>
+        <li>getLegislators
+          <ul>
+            <li>This method returns an object with a list of legislators and their associated attributes for a specified state, district,
+              or specific legislator (by cid). Will only return data for those in the 113th Congress.</li>
+              <li>Object return format:
+                <blockquote><pre>
+                  response: Object
+                      legislator: Array
+                          @attributes: Object [JSON Object containing the data for each individual legislator]
+                </pre></blockquote>
+          </ul>
+        </li>
+        <li>memPFDprofile
+          <ul>
+            <li>This method returns the PFD information for a member of Congress, specified by CID. Will only return data on those in Congress.</li>
+              <li>Object return format:
+                <blockquote><pre>
+                  response: Object
+                      member_profile: Object
+                          @attributes: Object [JSON object containing member information]
+                          assets: Object
+                              asset: Array
+                                  @attributes: Object [JSON object containing data for each asset]
+
+                </pre></blockquote>
+          </ul>
+        </li>
+        <li>candSummary
+          <ul>
+            <li>This method returns a summary of data on a specified candidate. This method returns data for a broader scope of candidates,
+            including those who have not taken office, such as Ben Carson and Donald Trump, among others.</li>
+              <li>Object return format:
+                <blockquote><pre>
+                  response: Object
+                      summary: Object
+                          @attributes: Object [JSON Object that contains data on the specified candidate]
+                </pre></blockquote>
+          </ul>
+        </li>
+        <li>candContrib
+          <ul>
+            <li>This method returns an object containing data about the top organizations contributing to a specified politician (by CID). </li>
+              <li>Object return format:
+                <blockquote><pre>
+                    response: Object
+                        contributors: Object
+                            @attributes: Object [contains data about candidate]
+                            contributor: Array [contains array list of organizations and their financial contribution data]
+                </pre></blockquote>
+          </ul>
+        </li>
+        <li>candIndustry
+          <ul>
+            <li>This method returns an object containing data about the top industries contributing to a specified politician. </li>
+              <li>Object return format:
+                <blockquote><pre>
+                    response: Object
+                        industries: Object
+                            @attributes: Object [contains JSON object containing data about specified candidate]
+                            industry: Array of Objects
+                                @attributes: Object [contains JSON object with data about each contributing industry]
+                </pre></blockquote>
+          </ul>
+        </li>
+        <li>candIndByInd
+          <ul>
+            <li>This method returns an object containing data about total contributed to a specified candidate from a specified industry, for a specified cycle. </li>
+            <li>The OpenSecrets website also provides access to a list of 3-character industry codes for requesting specific industries.</li>
+              <li>Object return format:
+                <blockquote><pre>
+                    return object format:
+                        response: Object
+                            candIndus: Object
+                                @attributes [contains JSON object detailing requested information]
+                </pre></blockquote>
+          </ul>
+        </li>
+        <li>candSector
+          <ul>
+            <li>This method returns an object containing data about the total receipts of a specified politician by industry sector.</li>
+              <li>Object return format:
+                <blockquote><pre>
+                    response: Object
+                        sectors: Object
+                            @attributes [JSON object containing candidate data]
+                            sector: Array
+                                @attributes: Object [JSON object containing data for each sector]
+                </pre></blockquote>
+          </ul>
+        </li>
+        <li>congCmteIndus
+          <ul>
+            <li>This method returns an object containing summary fundraising information for a specific committee, industry, and congress number.</li>
+            <li>OpenSecrets provides access to a list of codes by committee name, as well as for industry codes.</li>
+              <li>Object return format:
+                <blockquote><pre>
+                    response: Object
+                        committee: Object
+                            @attributes: Object [JSON object containing committee information]
+                            member: Array
+                                @attributes: Object	[JSON objects containing each committee member data]
+                </pre></blockquote>
+          </ul>
+        </li>
+        <li>getOrgs
+          <ul>
+            <li>This method returns the organization id and name for a requested organization, either by full name or partial.</li>
+            <li>This method does not have an example in the documentation, an example request for the organization ‘google’ looks like this:
+                <blockquote><code>
+                  req.open("GET", “http://www.opensecrets.org/api/?method=getOrgs&org=google&output=json&apikey=__INSERT__API__KEY__”, false);
+                </code></blockquote>
+            </li>
+              <li>Object return format:
+                <blockquote><pre>
+                    response: Object
+                        organization: Object
+                            @attributes: Object [JSON object containing orgid and orgname values for the specified organization]
+                </pre></blockquote>
+          </ul>
+        </li>
+        <li>orgSummary
+          <ul>
+            <li>This method returns financial data for a specified organization.</li>
+            <li>Use the getOrgs method to get the orgid for a specified organization.</li>
+              <li>Object return format:
+                <blockquote><pre>
+                    response: Object
+                        organization: Object
+                            @attributes: Object [JSON object containing financial data for specified organization]
+                </pre></blockquote>
+          </ul>
+        </li>
+      </ul>
+      <em>NOTE: If requested data on a specified candidate cannot be found, the server will return a 404 error. For example, some data can be accessed
+        for Donald Trump (calling candSummary will return successful data), but other methods, such as candIndustry, will be unsuccessful as the
+        candidate has not held office, and therefore has no data for it.</em>
+    </div>
+
+      <span class="nextPage">
+        <p>Now, go play with the OpenSecrets API and learn some interesting information about our US politicians!<p>
+        <form action="/">
+            <input type="submit" value="Home">
+        </form>
+      </span>
