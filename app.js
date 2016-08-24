@@ -18,7 +18,7 @@ app.use(express.static(__dirname + '/public'));
 
 var request = require('request'); //signals use of Request Library
 
-var apiKey = "5a04215830a943c36bede49ff284b38a";
+var apiKey = "API KEY HERE";
 var bernie = "N00000528";
 var hillary = "N00000019";
 var ben = "N00036973";
